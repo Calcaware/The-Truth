@@ -1,0 +1,67 @@
+{
+    "author": "calcaware@gmail.com",
+    "dependencies": {},
+    "keywords": [],
+    "name": "the-truth",
+    "pebble": {
+        "displayName": "The Truth",
+        "enableMultiJS": false,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/Char_Main_Use Magic.png",
+                    "name": "IMAGE_CHAR_MAIN_USE_MAGIC",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Char_Main_Walk_Right.png",
+                    "name": "IMAGE_CHAR_MAIN_WALK_RIGHT",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Char_Main_Walk_Left.png",
+                    "name": "IMAGE_CHAR_MAIN_WALK_LEFT",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Char_Main_Stand.png",
+                    "name": "IMAGE_CHAR_MAIN_STAND",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Background_Day.png",
+                    "name": "IMAGE_BACKGROUND_DAY",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Stone_Floor.png",
+                    "name": "IMAGE_FLOOR_STONE",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Grass_Floor.png",
+                    "name": "IMAGE_FLOOR_GRASS",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "basalt"
+        ],
+        "uuid": "203234b6-a7ee-42dc-b5ef-c7e054058d65",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.0.0"
+}
