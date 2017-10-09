@@ -28,6 +28,7 @@ struct env_data {
 	AppTimer *tick_timer;
 	int tick_speed;
 	char time[32];
+	int decor_count;
 	int max_decor_count;
 	struct image_data decor[16];
 };

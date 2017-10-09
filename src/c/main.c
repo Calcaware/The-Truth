@@ -14,13 +14,35 @@ static void time_change_handler(struct tm *tick_time, TimeUnits units_changed) {
 
 
 static void environment_update() { // Show Random Rocks, Trees, Grass, Etc
-	//int index = 0;
-	//int decor_count = (rand() % environment.max_decor_count) + 1;
+	int index = 0;
 	int x = rand() % 145;
-	//while (index != decor_count) { ++index; }
-	
-	
-	
+	environment.decor_count = (rand() % environment.max_decor_count) + 1;
+	while (index != environment.decor_count) {
+		environment.decor[index].layer = bitmap_layer_create(GRect(x, 120, 16, 16));
+		bitmap_layer_set_compositing_mode(environment.decor[index].layer, GCompOpSet);
+		if (rand() % 2 == 0) {
+			environment.decor[index].image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DECOR_ROCK_1);
+		}
+		else {
+			environment.decor[index].image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DECOR_GRASS_1);
+		}
+		bitmap_layer_set_bitmap(environment.decor[index].layer, environment.decor[index].image);
+		layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(environment.decor[index].layer));
+		x = rand() % 145;
+		++index;
+	}
+}
+
+
+static void environment_scrub() {
+	int index = 0;
+	while (index != environment.decor_count) {
+		layer_remove_from_parent(bitmap_layer_get_layer(environment.decor[index].layer));
+		gbitmap_destroy(environment.decor[index].image);
+		bitmap_layer_destroy(environment.decor[index].layer);
+		++index;
+	}
+	environment.decor_count = 0;
 }
 
 
@@ -38,7 +60,7 @@ static void player_update(uint32_t resource_id) { // Remove Player Image, Show N
 static void player_walk() {
 	if (player.coord.x < environment.floor.size.w) { player.coord.x++; }
 	else { player.coord.x = 0 - player.size.w; }
-	if (player.coord.x == (player.size.w / 2)) { environment_update(); }
+	if (player.coord.x == environment.floor.size.w) { environment_scrub(); environment_update(); }
 	if (player.animation.sprite_iterator < 20) { player.animation.sprite_iterator++; } else { player.animation.sprite_iterator = 0; }
 	if (player.animation.sprite_iterator < 5) { player_update(RESOURCE_ID_IMAGE_CHAR_MAIN_STAND); }
 	else if (player.animation.sprite_iterator < 10 && player.animation.sprite_iterator >= 6) { player_update(RESOURCE_ID_IMAGE_CHAR_MAIN_WALK_LEFT); }
@@ -96,7 +118,8 @@ static void click_config_provider(void *context) {
 
 static void environment_initialize() {
 	environment.tick_speed = 5;
-	environment.max_decor_count = 4;
+	environment.max_decor_count = 5;
+	environment.decor_count = 0; // Initialized to Ensure Scrubbing Works
 	environment.background.coord.x = 0;
 	environment.background.coord.y = 0;
 	environment.background.size.w = 144;
@@ -139,6 +162,7 @@ static void window_load(Window *window) {
 
 
 static void window_unload(Window *window) {
+	environment_scrub();
 	gbitmap_destroy(player.image);
 	bitmap_layer_destroy(player.layer);
 	gbitmap_destroy(environment.floor.image);

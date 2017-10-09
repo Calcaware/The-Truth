@@ -11,6 +11,18 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/Tall_Grass.png",
+                    "name": "IMAGE_DECOR_GRASS_1",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Rock1.png",
+                    "name": "IMAGE_DECOR_ROCK_1",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/The_Truth_Icon.png",
                     "menuIcon": true,
                     "name": "IMAGE_OS_ICON",
