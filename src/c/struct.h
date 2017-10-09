@@ -28,13 +28,21 @@ struct env_data {
 	AppTimer *tick_timer;
 	int tick_speed;
 	char time[32];
+	int max_decor_count;
+	struct image_data decor[16];
+};
+
+
+struct animation_data {
+	bool walking;
+	int sprite_iterator;
 };
 
 
 struct player_data {
 	GBitmap *image;
 	BitmapLayer *layer;
-	bool walking;
+	struct animation_data animation;
 	struct coordinate_data coord;
 	struct size_data size;
 	int health;

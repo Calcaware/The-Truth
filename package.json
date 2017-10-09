@@ -11,6 +11,13 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/The_Truth_Icon.png",
+                    "menuIcon": true,
+                    "name": "IMAGE_OS_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/Char_Main_Use Magic.png",
                     "name": "IMAGE_CHAR_MAIN_USE_MAGIC",
                     "targetPlatforms": null,

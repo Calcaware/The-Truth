@@ -5,17 +5,26 @@
 #include "src/c/struct.h"
 
 static Window *window;
-
 static struct env_data environment;
 static struct player_data player;
-
 
 static void time_change_handler(struct tm *tick_time, TimeUnits units_changed) {
 	strftime(environment.time, sizeof(environment.time), clock_is_24h_style() ? "%H:%M\n%m-%d" : "%I:%M\n%m-%d", tick_time);
 }
 
 
-static void player_update(uint32_t resource_id) {
+static void environment_update() { // Show Random Rocks, Trees, Grass, Etc
+	//int index = 0;
+	//int decor_count = (rand() % environment.max_decor_count) + 1;
+	int x = rand() % 145;
+	//while (index != decor_count) { ++index; }
+	
+	
+	
+}
+
+
+static void player_update(uint32_t resource_id) { // Remove Player Image, Show New Player Image at Coordinates (Coordinates Set Elsewhere)
 	layer_remove_from_parent(bitmap_layer_get_layer(player.layer));
 	gbitmap_destroy(player.image);
 	player.image = gbitmap_create_with_resource(resource_id);
@@ -29,12 +38,17 @@ static void player_update(uint32_t resource_id) {
 static void player_walk() {
 	if (player.coord.x < environment.floor.size.w) { player.coord.x++; }
 	else { player.coord.x = 0 - player.size.w; }
-	player_update(RESOURCE_ID_IMAGE_CHAR_MAIN_STAND);
+	if (player.coord.x == (player.size.w / 2)) { environment_update(); }
+	if (player.animation.sprite_iterator < 20) { player.animation.sprite_iterator++; } else { player.animation.sprite_iterator = 0; }
+	if (player.animation.sprite_iterator < 5) { player_update(RESOURCE_ID_IMAGE_CHAR_MAIN_STAND); }
+	else if (player.animation.sprite_iterator < 10 && player.animation.sprite_iterator >= 6) { player_update(RESOURCE_ID_IMAGE_CHAR_MAIN_WALK_LEFT); }
+	else if (player.animation.sprite_iterator < 15 && player.animation.sprite_iterator >= 11) { player_update(RESOURCE_ID_IMAGE_CHAR_MAIN_STAND); }
+	else if (player.animation.sprite_iterator < 20 && player.animation.sprite_iterator >= 16) { player_update(RESOURCE_ID_IMAGE_CHAR_MAIN_WALK_RIGHT); }
 }
 
 
 static void game_tick_callback(void *data) {
-	if (player.walking) { player_walk(); }
+	if (player.animation.walking) { player_walk(); }
 	environment.tick_timer = app_timer_register(environment.tick_speed, game_tick_callback, NULL);
 }
 
@@ -61,10 +75,12 @@ static void select_long_click_handler_release(ClickRecognizerRef recognizer, voi
 
 
 static void down_long_click_handler(ClickRecognizerRef recognizer, void *context) { // Keep Moving Forward
-	if (!player.walking) { player.walking = true; }
+	if (!player.animation.walking) { player.animation.walking = true; }
 }
 static void down_long_click_handler_release(ClickRecognizerRef recognizer, void *context) { // Stop Moving Forward
-	player.walking = false;
+	player.animation.walking = false;
+	player.animation.sprite_iterator = 0;
+	player_update(RESOURCE_ID_IMAGE_CHAR_MAIN_STAND);
 }
 
 
@@ -78,8 +94,9 @@ static void click_config_provider(void *context) {
 }
 
 
-static void window_load(Window *window) {
+static void environment_initialize() {
 	environment.tick_speed = 5;
+	environment.max_decor_count = 4;
 	environment.background.coord.x = 0;
 	environment.background.coord.y = 0;
 	environment.background.size.w = 144;
@@ -89,7 +106,6 @@ static void window_load(Window *window) {
 	bitmap_layer_set_compositing_mode(environment.background.layer, GCompOpSet);
 	bitmap_layer_set_bitmap(environment.background.layer, environment.background.image);
 	layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(environment.background.layer));
-	
 	environment.floor.coord.x = 0;
 	environment.floor.coord.y = 136;
 	environment.floor.size.w = 144;
@@ -99,7 +115,10 @@ static void window_load(Window *window) {
 	bitmap_layer_set_compositing_mode(environment.floor.layer, GCompOpSet);
 	bitmap_layer_set_bitmap(environment.floor.layer, environment.floor.image);
 	layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(environment.floor.layer));
-	
+}
+
+
+static void player_initialize() {
 	player.coord.x = 0;
 	player.coord.y = 104;
 	player.size.w = 32;
@@ -110,6 +129,12 @@ static void window_load(Window *window) {
 	bitmap_layer_set_bitmap(player.layer, player.image);
 	layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(player.layer));
 	environment.tick_timer = app_timer_register(environment.tick_speed, game_tick_callback, NULL);
+}
+
+
+static void window_load(Window *window) {
+	environment_initialize();
+	player_initialize();
 }
 
 
@@ -124,6 +149,7 @@ static void window_unload(Window *window) {
 
 
 static void init(void) {
+	srand((int32_t)time(NULL));
 	tick_timer_service_subscribe(SECOND_UNIT, time_change_handler);
 	window = window_create();
 	window_set_click_config_provider(window, click_config_provider);
